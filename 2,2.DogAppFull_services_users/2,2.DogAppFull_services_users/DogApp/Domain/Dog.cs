@@ -9,6 +9,8 @@ namespace DogApp.Domain
 {
     public class Dog
     {
+        public string OwnerId { get; set; }
+        public virtual DogUser Owner{get;set;}
        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 

@@ -9,6 +9,7 @@ using DogApp.Domain;
 using DogApp.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace DogApp.Controllers
 {
@@ -34,8 +35,8 @@ namespace DogApp.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                var created = _dogService.Create(bindingModel.Name, bindingModel.Age, bindingModel.Breed, bindingModel.Picture);
+                string currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var created = _dogService.Create(bindingModel.Name, bindingModel.Age, bindingModel.Breed, bindingModel.Picture, currentUserId);
                 if (created)
                 {
                     return this.RedirectToAction("Success");
@@ -128,7 +129,8 @@ namespace DogApp.Controllers
                     Name = dogFromDb.Name,
                     Age = dogFromDb.Age,
                     Breed = dogFromDb.Breed,
-                    Picture = dogFromDb.Picture
+                    Picture = dogFromDb.Picture,
+                    FullName=dogFromDb.Owner.FirstName + " " + dogFromDb.Owner.LastName
                 }).ToList();
 
             return this.View(dogs);
@@ -148,7 +150,8 @@ namespace DogApp.Controllers
                 Name = item.Name,
                 Age = item.Age,
                 Breed = item.Breed,
-                Picture = item.Picture
+                Picture = item.Picture,
+                FullName = item.Owner.FirstName + " " + item.Owner.LastName
             };
             return View(dog);
         }
